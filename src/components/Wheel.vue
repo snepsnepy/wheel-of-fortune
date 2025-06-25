@@ -1,106 +1,142 @@
 <template>
-  <svg :width="size" :height="size" :viewBox="`0 0 ${size} ${size}`">
-    <g :transform="`translate(${radius}, ${radius})`">
-      <template v-for="(segment, i) in segments" :key="i">
-        <path
-          :d="getPath(i)"
-          :fill="segment.color"
-          stroke="black"
-          stroke-width="1"
-        />
-        <text
-          :x="getLabelPosition(i).x"
-          :y="getLabelPosition(i).y"
-          text-anchor="middle"
-          alignment-baseline="middle"
-          font-size="12"
-          fill="#000"
-        >
-          {{ segment.label }}
-        </text>
-      </template>
-    </g>
-    <polygon :points="getArrowPoints()" fill="#000" />
-  </svg>
+  <section class="wheel-container">
+    <div class="pointer"></div>
+
+    <div class="wheel" :style="{ transform: `rotate(${totalRotation}deg)` }">
+      <div
+        class="prize"
+        v-for="(label, index) in labels"
+        :key="index"
+        :style="{
+          '--i': index,
+          '--angle': angle + 'deg',
+          backgroundColor: getColorForLabel(label),
+        }"
+      >
+        <span>{{ label }}</span>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
-const size = 600;
-const radius = size / 2;
-const segmentCount = 12;
-const angle = (2 * Math.PI) / segmentCount;
-const arrowSize = 20;
+import { ref } from "vue";
 
 const labels = [
-  "TRY_AGAIN",
+  "TRY AGAIN",
+  "TRY AGAIN",
   "WIN",
-  "TRY_AGAIN",
-  "SUPER_WIN",
+  "TRY AGAIN",
+  "TRY AGAIN",
+  "SUPER WIN",
+  "TRY AGAIN",
+  "TRY AGAIN",
   "WIN",
-  "TRY_AGAIN",
-  "TRY_AGAIN",
-  "TRY_AGAIN",
+  "TRY AGAIN",
+  "TRY AGAIN",
   "WIN",
-  "TRY_AGAIN",
-  "TRY_AGAIN",
-  "TRY_AGAIN",
 ];
 
-const getColorForLabel = (label, index) => {
+const angle = 360 / labels.length;
+const totalRotation = ref(0);
+const fullSpins = 5; // Number of dummy spinns
+const alignmentOffset = 2 * angle;
+
+const emit = defineEmits(["spin-complete"]);
+
+// Get color for each slice depending on the type of winning
+const getColorForLabel = (label) => {
   switch (label) {
-    case "SUPER_WIN":
-      return "#ff0000";
+    case "SUPER WIN":
+      return "#FFB22C";
     case "WIN":
-      return "#00b300";
-    case "TRY_AGAIN":
-      return "#fca311";
+      return "#0065F8";
+    case "TRY AGAIN":
+      return "#98A1BC";
     default:
       return "#cccccc";
   }
 };
 
-// Create segment data
-const segments = labels.map((label, i) => ({
-  label,
-  color: getColorForLabel(label, i),
-}));
-
-// Create SVG path for each segment
-const getPath = (i) => {
-  const startAngle = i * angle;
-  const endAngle = startAngle + angle;
-
-  const x1 = radius * Math.cos(startAngle);
-  const y1 = radius * Math.sin(startAngle);
-  const x2 = radius * Math.cos(endAngle);
-  const y2 = radius * Math.sin(endAngle);
-
-  return [
-    `M 0 0`,
-    `L ${x1} ${y1}`,
-    `A ${radius} ${radius} 0 0 1 ${x2} ${y2}`,
-    `Z`,
-  ].join(" ");
+// Get center angle of each wheel slice based on index
+const getSliceCenterAngle = (index) => {
+  return index * angle + angle / 2 - alignmentOffset;
 };
 
-// Compute label position for each segment
-const getLabelPosition = (i) => {
-  const midAngle = (i + 0.5) * angle;
-  const labelRadius = radius * 0.6;
-  return {
-    x: labelRadius * Math.cos(midAngle),
-    y: labelRadius * Math.sin(midAngle),
-  };
+const spinTheWheel = (index) => {
+  const currentRotation = totalRotation.value;
+  const normalizedRotation = currentRotation % 360;
+
+  const sliceCenterAngle = getSliceCenterAngle(index);
+  const fullRotation = fullSpins * 360;
+  const rotationToTarget = 360 - sliceCenterAngle - normalizedRotation;
+
+  totalRotation.value += fullRotation + rotationToTarget;
+
+  setTimeout(() => {
+    const result = labels[index];
+    emit("spin-complete", result);
+  }, 3000);
 };
 
-// Arrow points
-const getArrowPoints = () => {
-  const tipX = radius;
-  const tipY = 600;
-  return [
-    `${tipX},${tipY - arrowSize}`,
-    `${tipX - arrowSize},${tipY}`,
-    `${tipX + arrowSize},${tipY}`,
-  ].join(" ");
-};
+defineExpose({ spinTheWheel });
 </script>
+
+<style scoped>
+.wheel-container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wheel-container .wheel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #333;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 5px #333, 0 0 0 15px #e9dfc3, 0 0 0 18px #111;
+  transition: transform 3s ease-in-out;
+}
+
+.wheel-container .wheel .prize {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform-origin: bottom right;
+  transform: rotate(calc(var(--angle) * var(--i)));
+  clip-path: polygon(0 0, 42% 0, 100% 100%, 0 40%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+/* Rotate text for each wheel slice */
+.wheel-container .wheel .prize span {
+  position: relative;
+  transform: rotate(45deg);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.pointer {
+  position: absolute;
+  top: -10px; /* little down from very top */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 30px solid #e9dfc3; /* red pointer */
+  z-index: 10; /* above wheel */
+  user-select: none;
+}
+</style>
