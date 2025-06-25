@@ -1,15 +1,15 @@
 <template>
   <section class="container">
-    <div class="header">
+    <header class="header">
       <h1>Welcome, {{ getUserName }}</h1>
       <p class="balance">Your balance: {{ store.availableBalance }}</p>
+
       <p v-if="canSpin" class="winning-message">{{ winningMessage }}</p>
       <p v-else-if="!canSpin && !isSpinning" class="error-message">
         Insufficient funds!
       </p>
-    </div>
+    </header>
 
-    {{ desiredIndex }}
     <Wheel ref="wheelRef" @spin-complete="handlePrizeResult" />
 
     <button
@@ -30,7 +30,6 @@ import { ref, computed } from "vue";
 
 const store = useSystemStore();
 const wheelRef = ref(null);
-const desiredIndex = ref();
 const winningMessage = ref("");
 const isSpinning = ref(false);
 
@@ -67,10 +66,9 @@ const triggerSpin = async () => {
 
   try {
     const index = await getSpinResultFromServer();
-    console.log("INDEX: ", index);
     store.deductSpinCost();
     clearWinningMessage();
-    await wheelRef.value?.spinTheWheel(index);
+    wheelRef.value?.spinTheWheel(index);
   } catch (error) {
     console.error("Failed to get random index:", error);
   }
@@ -95,76 +93,36 @@ const handlePrizeResult = (result) => {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use "../assets/styles/mixins" as *;
+
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 48px;
-}
+  @include container;
 
-.header {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  gap: 12px;
-  min-height: 100px;
-}
+  .header {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    min-height: 100px;
 
-.balance {
-  font-size: 20px;
-  line-height: 20px;
-  font-weight: 500;
-}
+    .balance {
+      font-size: 20px;
+      line-height: 20px;
+      font-weight: 500;
+    }
 
-.error-message {
-  color: red;
-  font-size: 24px;
-  line-height: 24px;
-  font-weight: 600;
-}
+    .winning-message {
+      @include message-style(yellow);
+    }
 
-.winning-message {
-  color: yellow;
-  font-size: 20px;
-  line-height: 20px;
-  font-weight: 600;
-}
+    .error-message {
+      @include message-style(red);
+    }
+  }
 
-.button {
-  background-color: #ea4c89;
-  border-radius: 8px;
-  border-style: none;
-  box-sizing: border-box;
-  color: #ffffff;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: 700;
-  height: 40px;
-  line-height: 20px;
-  list-style: none;
-  margin: 0;
-  outline: none;
-  padding: 10px 16px;
-  position: relative;
-  text-align: center;
-  text-decoration: none;
-  transition: color 100ms;
-  vertical-align: baseline;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.button:hover {
-  background-color: #f082ac;
-}
-
-.button:disabled {
-  pointer-events: none;
-  background-color: #ea4c89;
-  opacity: 70%;
+  .button {
+    @include button;
+  }
 }
 </style>

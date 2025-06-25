@@ -1,0 +1,52 @@
+@use "./variables.scss" as *;
+
+@mixin button {
+  background-color: $primary;
+  border-radius: 8px;
+  border-style: none;
+  box-sizing: border-box;
+  color: $base-content;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 700;
+  height: 40px;
+  line-height: 20px;
+  list-style: none;
+  margin: 0;
+  outline: none;
+  padding: 10px 16px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: color 100ms;
+  vertical-align: baseline;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+
+  &:hover {
+    background-color: $primary-hover;
+  }
+
+  &:disabled {
+    pointer-events: none;
+    background-color: $primary;
+    opacity: 70%;
+  }
+}
+
+@mixin container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+@mixin message-style($color) {
+  color: $color;
+  font-size: 20px;
+  line-height: 20px;
+  font-weight: 600;
+}

@@ -27,6 +27,7 @@
     </form>
   </section>
 </template>
+
 <script setup>
 import { useSystemStore } from "../stores/systemStore";
 import FormInput from "../components/FormInput.vue";
@@ -73,13 +74,11 @@ function submitForm() {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use "../assets/styles/mixins" as *;
+
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
+  @include container;
 }
 
 .form {
@@ -89,38 +88,6 @@ function submitForm() {
 }
 
 .button {
-  background-color: #ea4c89;
-  border-radius: 8px;
-  border-style: none;
-  box-sizing: border-box;
-  color: #ffffff;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: 700;
-  height: 40px;
-  line-height: 20px;
-  list-style: none;
-  margin: 0;
-  outline: none;
-  padding: 10px 16px;
-  position: relative;
-  text-align: center;
-  text-decoration: none;
-  transition: color 100ms;
-  vertical-align: baseline;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-.button:hover {
-  background-color: #f082ac;
-}
-
-.button:disabled {
-  pointer-events: none;
-  background-color: #ea4c89;
-  opacity: 70%;
+  @include button;
 }
 </style>

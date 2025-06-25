@@ -82,7 +82,7 @@ const spinTheWheel = (index) => {
 defineExpose({ spinTheWheel });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .wheel-container {
   position: relative;
   width: 600px;
@@ -90,53 +90,52 @@ defineExpose({ spinTheWheel });
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-.wheel-container .wheel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: #333;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 0 0 5px #333, 0 0 0 15px #e9dfc3, 0 0 0 18px #111;
-  transition: transform 3s ease-in-out;
-}
+  .wheel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #333;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 5px #333, 0 0 0 15px #e9dfc3, 0 0 0 18px #111;
+    transition: transform 3s ease-in-out;
 
-.wheel-container .wheel .prize {
-  position: absolute;
-  width: 50%;
-  height: 50%;
-  transform-origin: bottom right;
-  transform: rotate(calc(var(--angle) * var(--i)));
-  clip-path: polygon(0 0, 42% 0, 100% 100%, 0 40%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  user-select: none;
-}
+    .prize {
+      position: absolute;
+      width: 50%;
+      height: 50%;
+      transform-origin: bottom right;
+      transform: rotate(calc(var(--angle) * var(--i)));
+      clip-path: polygon(0 0, 42% 0, 100% 100%, 0 40%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
 
-/* Rotate text for each wheel slice */
-.wheel-container .wheel .prize span {
-  position: relative;
-  transform: rotate(45deg);
-  font-size: 1.2rem;
-  font-weight: 500;
-}
+      span {
+        position: relative;
+        transform: rotate(45deg);
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+    }
+  }
 
-.pointer {
-  position: absolute;
-  top: -10px; /* little down from very top */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-top: 30px solid #e9dfc3; /* red pointer */
-  z-index: 10; /* above wheel */
-  user-select: none;
+  .pointer {
+    position: absolute;
+    top: -10px; /* position from the top */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 30px solid #e9dfc3; /* pointer color */
+    z-index: 10; /* position above the wheel */
+    user-select: none;
+  }
 }
 </style>
